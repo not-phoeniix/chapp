@@ -9,7 +9,7 @@
     "start": "npx ts-node ./src/server/app.ts",
     "pretest": "eslint ./src --fix",
     "test": "echo \"Tests complete\"",
-    "heroku-postbuild": "webpack"
+    "heroku-postbuild": "npm run build"
   },
   "keywords": [],
   "author": "",
@@ -49,6 +49,7 @@
     "nodemon": "^3.1.10",
     "react": "^19.2.5",
     "react-dom": "^19.2.5",
+    "sass": "^1.99.0",
     "ts-loader": "^9.5.7",
     "txc": "^0.0.1",
     "typescript-eslint": "^8.58.2",
