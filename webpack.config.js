@@ -31,6 +31,9 @@ module.exports = {
     watchOptions: {
         aggregateTimeout: 200,
     },
+    resolve: {
+        extensions: [".js", ".jsx", ".ts", ".tsx"]
+    },
     output: {
         path: path.resolve(__dirname, 'build'),
         filename: '[name]Bundle.js',

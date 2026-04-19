@@ -23,7 +23,7 @@ const login = async (req: Request, res: Response) => {
         }
 
         (req.session as any).account = doc.toMinimal();
-        return res.json({ redirect: "/chat" });
+        return res.json({ redirect: "/" });
 
     } catch (err) {
         console.log(err);

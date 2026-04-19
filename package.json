@@ -39,6 +39,8 @@
     "@types/compression": "^1.8.1",
     "@types/express": "^5.0.6",
     "@types/express-session": "^1.19.0",
+    "@types/react": "^19.2.14",
+    "@types/react-dom": "^19.2.3",
     "@types/redis": "^4.0.10",
     "@types/serve-favicon": "^2.5.7",
     "@types/underscore": "^1.13.0",
