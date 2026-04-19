@@ -6,7 +6,7 @@
   "scripts": {
     "build": "webpack && sass './src/client/style.scss:./build/style.css'",
     "nodemon": "nodemon",
-    "start": "npx ts-node ./src/server/app.ts",
+    "start": "npx ts-node --transpile-only ./src/server/app.ts",
     "pretest": "eslint ./src --fix",
     "test": "echo \"Tests complete\"",
     "heroku-postbuild": "npm run build"
