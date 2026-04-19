@@ -15,14 +15,6 @@ export interface ChannelDoc extends Channel, mongoose.Document {
 
 // ~~~ functions for schema ~~~
 
-async function getMessages(this: ChannelDoc): Promise<Message[]> {
-    const messages = await Promise.all(this.messages.map(async id => {
-        return (await MessageModel.findById(id))?.toMinimal();
-    }));
-
-    return messages.filter(m => m !== undefined);
-}
-
 function toMinimal(this: ChannelDoc): Channel {
     return {
         name: this.name,
@@ -52,7 +44,6 @@ const schemaDef = {
 } as const;
 
 const methods = {
-    getMessages,
     toMinimal,
 } as const;
 

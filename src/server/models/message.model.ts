@@ -5,6 +5,7 @@ import mongoose from "mongoose";
 export interface Message {
     from: mongoose.Types.ObjectId;
     content: string;
+    channel: mongoose.Types.ObjectId;
     id?: any;
 };
 
@@ -20,6 +21,7 @@ function toMinimal(this: MessageDoc): Message {
     return {
         from: this.from,
         content: this.content,
+        channel: this.channel,
         id: this.id,
     };
 }
@@ -34,6 +36,11 @@ const schemaDef = {
     },
     content: {
         type: String,
+        required: true,
+    },
+    channel: {
+        type: mongoose.Schema.ObjectId,
+        ref: "Channel",
         required: true,
     },
     sentAt: {
