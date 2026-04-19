@@ -1,0 +1,84 @@
+import { Channel } from "../models";
+import { Request, Response } from "express";
+
+const appPage = (req: Request, res: Response) => res.render("app");
+
+const getChannelMessages = async (req: Request, res: Response) => {
+    const { name } = req.body;
+
+    if (!name) {
+        return res.status(400).json({ error: "Missing required paramter!" });
+    }
+
+    try {
+        const doc = await Channel.findOne({ name });
+        if (!doc) {
+            return res.status(404).json({ error: "Couldn't find channel!" });
+        }
+
+        const messages = await doc.getMessages();
+
+        return res.json({ messages });
+
+    } catch (err) {
+        console.log(err);
+        return res.status(500).json({ error: "Internal error occured!" });
+    }
+};
+
+const createChannel = async (req: Request, res: Response) => {
+    const { name } = req.body;
+
+    if (!name) {
+        return res.status(400).json({ error: "Missing required paramter!" });
+    }
+
+    try {
+        const newChannel = new Channel({ name, messages: [] });
+        await newChannel.save();
+
+        // give the frontend the id back so it can be used 
+        //   without having to do another fetch
+        return res.json({ id: newChannel.id });
+
+    } catch (err: any) {
+        console.log(err);
+
+        if (err.code === 11000) {
+            return res.status(400).json({ error: "Channel name already exists!" });
+        }
+
+        return res.status(500).json({ error: "Internal server error occured!" });
+    }
+}
+
+const deleteChannel = async (req: Request, res: Response) => {
+    const { id } = req.body;
+
+    if (!id) {
+        return res.status(400).json({ error: "Missing required paramter!" });
+    }
+
+    try {
+        const doc = await Channel.findById(id);
+
+        if (!doc) {
+            return res.status(404).json({ error: "Could not find channel!" });
+        }
+
+        await doc.deleteOne();
+
+        return res.status(204);
+
+    } catch (err) {
+        console.log(err);
+        return res.status(500).json({ error: "Internal server error occured!" });
+    }
+};
+
+export default {
+    appPage,
+    getChannelMessages,
+    createChannel,
+    deleteChannel,
+};

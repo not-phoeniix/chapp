@@ -1,0 +1,8 @@
+{
+    "verbose": true,
+    "watch": [
+        "src"
+    ],
+    "ext": "ts,json,html,scss,handlebars",
+    "exec": "ts-node ./src/server/app.ts"
+}
