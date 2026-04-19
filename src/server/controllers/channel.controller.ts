@@ -1,4 +1,4 @@
-import { Channel, Message } from "../models";
+import { Channel } from "../models";
 import { Request, Response } from "express";
 import * as channelModel from "../models/channel.model";
 

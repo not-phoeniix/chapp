@@ -1,5 +1,4 @@
 import mongoose from "mongoose";
-import MessageModel, { Message } from "./message.model";
 
 // ~~~ types ~~~
 
@@ -31,7 +30,7 @@ const schemaDef = {
         required: true,
         unique: true,
         trim: true,
-        match: /^[A-Za-z_\-\.]{1,16}$/,
+        match: /^[A-Za-z_\-.]{1,16}$/,
     },
     messages: {
         type: [{

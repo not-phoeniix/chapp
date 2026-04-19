@@ -3,11 +3,11 @@ import express from "express";
 import compression from "compression"
 import serveFavicon from "serve-favicon";
 import mongoose from "mongoose";
-import expressHandlebars from "express-handlebars";
+import * as expressHandlebars from "express-handlebars";
 import expressSession from "express-session";
 import helmet from "helmet";
 import { RedisStore } from "connect-redis";
-import redis from "redis";
+import * as redis from "redis";
 import router from "./router";
 
 import dotenv from "dotenv";
@@ -27,13 +27,15 @@ const redisClient = redis.createClient({
     url: process.env.REDIS_URI
 });
 
-redisClient.on("error", (err: any) => console.log("Redis client error: " + err));
+redisClient.on("error", (err) => console.log(`Redis client error: ${err.toString()}`));
 redisClient.connect().then(() => {
     const app = express();
+    
+    const buildPath = path.resolve(`${__dirname}/../../build`);
 
     app.use(helmet());
-    app.use("/assets", express.static(path.resolve(`${__dirname}/../hosted`)));
-    app.use(serveFavicon(`${__dirname}/../hosted/img/favicon.png`));
+    app.use("/assets", express.static(buildPath));
+    app.use(serveFavicon(`${buildPath}/img/favicon.png`));
     app.use(compression());
     app.use(express.urlencoded({ extended: true }));
     app.use(express.json());
