@@ -4,7 +4,9 @@
   "description": "",
   "main": "./server/app.ts",
   "scripts": {
-    "build": "webpack && sass './src/client/style.scss:./build/style.css'",
+    "sass": "sass './src/client/style.scss:./build/style.css'",
+    "webpack": "webpack",
+    "build": "npm run webpack && npm run sass",
     "nodemon": "nodemon",
     "start": "npx ts-node --transpile-only ./src/server/app.ts",
     "pretest": "eslint ./src --fix",

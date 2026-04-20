@@ -3,17 +3,17 @@ import mid from "./middleware";
 import { Account, Channel, Message } from "./controllers";
 
 const router = (app: express.Express) => {
-    // main page
-    app.get("/", mid.requiresSecure, mid.requiresLogin, Channel.appPage);
+    // ~~~ main HTML view endpoints ~~~
 
-    // ~~~ account stuff  ~~~
+    app.get("/", mid.requiresSecure, mid.requiresLogin, (req, res) => res.render("app"));
+    app.get("/settings", mid.requiresSecure, mid.requiresLogin, (req, res) => res.render("settings"));
+    app.get("/login", mid.requiresSecure, mid.requiresLogout, (req, res) => res.render("login"));
 
-    app.get("/login", mid.requiresSecure, mid.requiresLogout, Account.loginPage);
+    // ~~~ other api endpoints ~~~
+
     app.post("/login", mid.requiresSecure, mid.requiresLogout, Account.login);
     app.post("/signup", mid.requiresSecure, mid.requiresLogout, Account.signup);
     app.get("/logout", mid.requiresLogin, Account.logout);
-
-    // ~~~ other api endpoints ~~~
 
     app.post("/message", mid.requiresSecure, mid.requiresLogin, Message.sendMessage);
     app.get("/message", mid.requiresSecure, mid.requiresLogin, Message.getMessage);

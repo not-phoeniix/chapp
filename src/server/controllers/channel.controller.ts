@@ -2,8 +2,6 @@ import { Channel } from "../models";
 import { Request, Response } from "express";
 import * as channelModel from "../models/channel.model";
 
-const appPage = (req: Request, res: Response) => res.render("app");
-
 const getChannel = async (req: Request, res: Response) => {
     // can input either name or id for fetching (prefer id)
     const { name, id } = req.body;
@@ -115,7 +113,6 @@ const deleteChannel = async (req: Request, res: Response) => {
 };
 
 export default {
-    appPage,
     getChannel,
     getChannels,
     createChannel,

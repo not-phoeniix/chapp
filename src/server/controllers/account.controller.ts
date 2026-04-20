@@ -1,8 +1,6 @@
 import { Account } from "../models";
 import { Request, Response } from "express";
 
-const loginPage = (req: Request, res: Response) => res.render("login");
-
 const logout = (req: Request, res: Response) => {
     req.session.destroy(() => console.log("Session destroyed!"));
     return res.redirect("/");
@@ -64,7 +62,6 @@ const signup = async (req: Request, res: Response) => {
 };
 
 export default {
-    loginPage,
     logout,
     login,
     signup
