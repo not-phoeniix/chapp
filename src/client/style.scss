@@ -1,1 +1,101 @@
-// TODO: style app !
+// ~~~ style vars ~~~
+$bg : #121118;
+$bgSecondary: #1d1e25;
+$fg: #fafafa;
+$accent: #ee1443;
+
+// ~~~ general styles ~~~
+section,
+body {
+    margin: 0;
+    padding: 0;
+    background-color: $bg;
+    width: 100%;
+    height: 100%;
+}
+
+p {
+    color: $fg;
+}
+
+h1,
+h2,
+h3 {
+    color: $accent;
+}
+
+.titlebar {
+    background-color: $bgSecondary;
+
+    & .items-left * {
+        margin-right: 10px;
+    }
+
+    & .items-right * {
+        margin-left: 10px;
+    }
+}
+
+.channel-label {
+    padding: 5px;
+    border-radius: 5px;
+
+    & *:link,
+    & *:visited,
+    & *:focus,
+    & *:hover,
+    & *:active {
+        color: $accent;
+    }
+
+    &:hover {
+        background-color: rgba($fg, 0.03);
+        cursor: pointer;
+    }
+
+    &.focused {
+        background-color: rgba($fg, 0.06);
+    }
+}
+
+.grow {
+    flex-grow: 1;
+}
+
+.flex.horiz {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.root-ui-flex {
+    display: flex;
+    align-items: stretch;
+    justify-content: stretch;
+    height: 100%;
+    width: 100%;
+
+    &.horiz {
+        flex-direction: row;
+    }
+
+    &.vert {
+        flex-direction: column;
+    }
+}
+
+.chat-main {
+    overflow-y: scroll;
+}
+
+.round-bg {
+    background-color: $bgSecondary;
+    margin: 15px 10px;
+    padding: 10px;
+    border-radius: 15px;
+
+    &>* {
+        padding: 5px;
+        margin: 0;
+    }
+}

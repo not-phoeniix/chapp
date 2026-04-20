@@ -1,6 +1,7 @@
 import { SubmitEvent, useState } from "react";
 import { Container, createRoot, Root } from "react-dom/client";
-import { StatusProps, StatusWidget, fastFetch } from "./utils";
+import { StatusProps, StatusWidget, formFetch } from "./utils";
+import { CacheKeys } from "./types";
 
 let root: Root;
 
@@ -14,16 +15,17 @@ async function onLoginSubmit(
     const pass = (e.target.querySelector("#password-input")! as HTMLInputElement).value;
 
     if (!username || !pass) {
-        props.setStatus("Missing required params for login!");
+        props.status.set("Missing required params for login!");
         return false;
     }
 
-    const res = await fastFetch(e.target, { username, pass });
+    const res = await formFetch(e.target, { username, pass });
     const json = await res.json();
     const msg = JSON.stringify(json);
-    props.setStatus(msg);
+    props.status.set(msg);
 
     if (json.redirect) {
+        localStorage.setItem(CacheKeys.USERNAME, username);
         window.location = json.redirect;
     }
 
@@ -41,21 +43,22 @@ async function onSignupSubmit(
     const pass2 = (e.target.querySelector("#password-input2")! as HTMLInputElement).value;
 
     if (!username || !pass || !pass2) {
-        props.setStatus("Missing required params for login!");
+        props.status.set("Missing required params for login!");
         return false;
     }
 
     if (pass !== pass2) {
-        props.setStatus("Passwords must match!");
+        props.status.set("Passwords must match!");
         return false;
     }
 
-    const res = await fastFetch(e.target, { username, pass, pass2 });
+    const res = await formFetch(e.target, { username, pass, pass2 });
     const json = await res.json();
     const msg = JSON.stringify(json);
-    props.setStatus(msg);
+    props.status.set(msg);
 
     if (json.redirect) {
+        localStorage.setItem(CacheKeys.USERNAME, username);
         window.location = json.redirect;
     }
 
@@ -76,18 +79,16 @@ function LoginWidget(props: StatusProps) {
             <input type="text" name="username" id="username-input" />
 
             <label htmlFor="password">Password:</label>
-            <input type="text" name="password" id="password-input" />
+            <input type="password" name="password" id="password-input" />
 
             <input type="submit" value="Sign In" />
         </form>
 
         <p><a
-            href=""
+            href="javascript:void(0)"
             onClick={(e) => {
                 e.preventDefault();
-                root.render(<SignupWidget
-                    status={props.status}
-                    setStatus={props.setStatus} />);
+                root.render(SignupWidget(props));
             }}
         >
             sign up...
@@ -109,21 +110,19 @@ function SignupWidget(props: StatusProps) {
             <input type="text" name="username" id="username-input" />
 
             <label htmlFor="password">Password:</label>
-            <input type="text" name="password" id="password-input" />
+            <input type="password" name="password" id="password-input" />
 
             <label htmlFor="password2">Repeat Password:</label>
-            <input type="text" name="password2" id="password-input2" />
+            <input type="password" name="password2" id="password-input2" />
 
             <input type="submit" value="Sign Up" />
         </form>
 
         <p><a
-            href=""
+            href="javascript:void(0)"
             onClick={(e) => {
                 e.preventDefault();
-                root.render(<LoginWidget
-                    status={props.status}
-                    setStatus={props.setStatus} />);
+                root.render(LoginWidget(props));
             }}
         >
             log in.....
@@ -134,9 +133,16 @@ function SignupWidget(props: StatusProps) {
 function RootWidget() {
     const [status, setStatus] = useState("");
 
+    const props: StatusProps = {
+        status: {
+            value: status,
+            set: setStatus,
+        }
+    };
+
     return <div>
-        <LoginWidget status={status} setStatus={setStatus} />
-        <StatusWidget status={status} setStatus={setStatus} />
+        {LoginWidget(props)}
+        {StatusWidget(props)}
     </div>
 };
 

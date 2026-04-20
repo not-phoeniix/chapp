@@ -1,6 +1,20 @@
-import { Dispatch, SetStateAction } from "react";
+import { Variable } from "./types";
 
-export async function fastFetch(form: HTMLFormElement, body: object) {
+type FetchMethod = "GET" | "DELETE" | "POST" | "PATCH";
+
+export async function fastFetch(url: string, body?: object, method: FetchMethod = "GET") {
+    const res = await fetch(url, {
+        method,
+        headers: {
+            "Content-Type": "application/json"
+        },
+        body: JSON.stringify(body),
+    });
+
+    return res;
+}
+
+export async function formFetch(form: HTMLFormElement, body: object) {
     const res = await fetch(form.action, {
         method: form.method,
         headers: {
@@ -14,15 +28,14 @@ export async function fastFetch(form: HTMLFormElement, body: object) {
 
 
 export interface StatusProps {
-    status: string;
-    setStatus: Dispatch<SetStateAction<string>>
+    status: Variable<string>;
 };
 
 export const StatusWidget = (props: StatusProps) => {
     if (props.status) {
         return <div>
             <p><b>Status:</b></p>
-            <p><em>{props.status}</em></p>
+            <p><em>{props.status.value}</em></p>
         </div>;
     }
 };
