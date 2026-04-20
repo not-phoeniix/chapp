@@ -84,17 +84,24 @@ const createChannel = async (req: Request, res: Response) => {
 }
 
 const deleteChannel = async (req: Request, res: Response) => {
-    const { id } = req.body;
+    // can input either name or id for fetching (prefer id)
+    const { name, id } = req.body;
 
-    if (!id) {
+    if (!name && !id) {
         return res.status(400).json({ error: "Missing required paramter!" });
     }
 
     try {
-        const doc = await Channel.findById(id);
+        let doc: channelModel.ChannelDoc | null;
+
+        if (id) {
+            doc = await Channel.findById(id);
+        } else {
+            doc = await Channel.findOne({ name });
+        }
 
         if (!doc) {
-            return res.status(404).json({ error: "Channel does not exist!" });
+            return res.status(404).json({ error: "Channel doesn't exist!" });
         }
 
         await doc.deleteOne();
