@@ -21,6 +21,7 @@ const router = (app: express.Express) => {
     app.delete("/message", mid.requiresSecure, mid.requiresLogin, Message.deleteMessage);
 
     app.get("/channel", mid.requiresSecure, mid.requiresLogin, Channel.getChannel);
+    app.get("/channels", mid.requiresSecure, mid.requiresLogin, Channel.getChannels);
     app.post("/channel", mid.requiresSecure, mid.requiresLogin, Channel.createChannel);
     app.delete("/channel", mid.requiresSecure, mid.requiresLogin, Channel.deleteChannel);
 };

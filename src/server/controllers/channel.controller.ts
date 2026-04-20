@@ -40,6 +40,23 @@ const getChannel = async (req: Request, res: Response) => {
     }
 };
 
+const getChannels = async (req: Request, res: Response) => {
+    try {
+        const channels = (await Channel.find())
+            .map(c => ({
+                name: c.name,
+                messages: c.messages.map(m => m.toString()),
+                id: c.id,
+            }));
+
+        return res.json(channels);
+
+    } catch (err) {
+        console.log(err);
+        return res.status(500).json({ error: "Internal error occured!" });
+    }
+};
+
 const createChannel = async (req: Request, res: Response) => {
     const { name } = req.body;
 
@@ -93,6 +110,7 @@ const deleteChannel = async (req: Request, res: Response) => {
 export default {
     appPage,
     getChannel,
+    getChannels,
     createChannel,
     deleteChannel,
 };

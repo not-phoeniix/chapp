@@ -4,5 +4,5 @@
         "src"
     ],
     "ext": "ts,json,html,scss,handlebars",
-    "exec": "ts-node ./src/server/app.ts"
+    "exec": "npx ts-node ./src/server/app.ts"
 }
