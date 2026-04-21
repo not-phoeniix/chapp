@@ -70,14 +70,14 @@ h3 {
         }
     }
 
-    margin-left: 0;
-    margin-bottom: $gaps-inner;
+    margin-left: calc($gaps-inner / 2px);
+    margin-bottom: calc($gaps-inner / 2px);
     margin-top: $gaps-outer;
     margin-right: $gaps-outer;
 }
 
 .channels {
-    margin-right: $gaps-inner;
+    margin-right: calc($gaps-inner / 2px);
     margin-top: $gaps-outer;
     margin-bottom: $gaps-outer;
     margin-left: $gaps-outer;
@@ -86,8 +86,8 @@ h3 {
 .chat {
     margin-bottom: $gaps-outer;
     margin-right: $gaps-outer;
-    margin-top: 0;
-    margin-left: 0;
+    margin-top: calc($gaps-inner / 2px);
+    margin-left: calc($gaps-inner / 2px);
 }
 
 .clickable {
