@@ -36,13 +36,14 @@ async function onChannelAddCreate(
 ) {
     e.preventDefault();
 
-    const name = (e.target.querySelector("#new-channel-input")! as HTMLInputElement).value;
+    const input = e.target.querySelector("#new-channel-input")! as HTMLInputElement;
 
-    if (!name) {
+    if (!input.value) {
         return false;
     }
 
-    await api.createChannel(name);
+    await api.createChannel(input.value);
+    input.value = "";
     props.markRefresh();
 
     return false;
@@ -146,8 +147,10 @@ const ChatWindow = (props: ChatProps) => {
         ? messages.map(Message)
         : <h3>no messages yet!</h3>;
 
+    // https://css-tricks.com/books/greatest-css-tricks/pin-scrolling-to-bottom/
+
     return <div className="round-bg grow chat flex vert">
-        <div className={`grow ${messages.length === 0 ? "flex center" : ""}`}>
+        <div className={`message-container grow ${messages.length === 0 ? "flex center" : ""}`}>
             {inner}
         </div>
 

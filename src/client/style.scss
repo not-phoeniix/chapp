@@ -177,3 +177,9 @@ h3 {
         margin-left: 5px;
     }
 }
+
+.message-container {
+    overflow-y: auto;
+    // TODO: figure out how to clamp this dynamically somehow
+    max-height: 75vh;
+}
