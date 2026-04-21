@@ -1,20 +1,27 @@
-// ~~~ style vars ~~~
+@import "https://www.nerdfonts.com/assets/css/webfont.css";
+// ~~~ vars ~~~
 $bg : #121118;
-$bgSecondary: #1d1e25;
+$bg-secondary: #1d1e25;
 $fg: #fafafa;
 $accent: #ee1443;
+$gaps-inner: 15px;
+$gaps-outer: 50px;
+$button-hover: rgba($fg, 0.03);
+$button-selected: rgba($fg, 0.06);
 
 // ~~~ general styles ~~~
 section,
 body {
+    width: 100%;
+    height: 100%;
     margin: 0;
     padding: 0;
     background-color: $bg;
-    width: 100%;
-    height: 100%;
 }
 
-p {
+p,
+div,
+span {
     color: $fg;
 }
 
@@ -25,37 +32,85 @@ h3 {
 }
 
 .titlebar {
-    background-color: $bgSecondary;
+    background-color: $bg-secondary;
 
-    & .items-left * {
+    & * {
+        padding: 0;
+        margin: 0;
+    }
+
+    & .items-left>* {
         margin-right: 10px;
     }
 
-    & .items-right * {
+    & .items-right>* {
         margin-left: 10px;
     }
+
+    & a {
+        color: $fg;
+        padding: 5px;
+        background-color: unset;
+        border-radius: 5px;
+        text-decoration: none;
+
+        &:link,
+        &:visited {
+            color: $fg;
+        }
+
+        &:focus,
+        &:active {
+            color: $accent;
+        }
+
+        &:hover {
+            color: $fg;
+            background-color: $button-hover;
+        }
+    }
+
+    margin-left: 0;
+    margin-bottom: $gaps-inner;
+    margin-top: $gaps-outer;
+    margin-right: $gaps-outer;
 }
 
-.channel-label {
+.channels {
+    margin-right: $gaps-inner;
+    margin-top: $gaps-outer;
+    margin-bottom: $gaps-outer;
+    margin-left: $gaps-outer;
+}
+
+.chat {
+    margin-bottom: $gaps-outer;
+    margin-right: $gaps-outer;
+    margin-top: 0;
+    margin-left: 0;
+}
+
+.clickable {
+    background-color: $bg-secondary;
     padding: 5px;
     border-radius: 5px;
 
-    & *:link,
-    & *:visited,
-    & *:focus,
-    & *:hover,
-    & *:active {
-        color: $accent;
-    }
-
     &:hover {
-        background-color: rgba($fg, 0.03);
+        background-color: $button-hover;
         cursor: pointer;
     }
 
     &.focused {
-        background-color: rgba($fg, 0.06);
+        background-color: $button-selected;
     }
+}
+
+.accent {
+    color: $accent;
+}
+
+.accent-bg {
+    background-color: $accent;
 }
 
 .grow {
@@ -66,6 +121,12 @@ h3 {
     display: flex;
     align-items: center;
     justify-content: space-between;
+}
+
+.flex.center {
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
 
 .root-ui-flex {
@@ -89,8 +150,7 @@ h3 {
 }
 
 .round-bg {
-    background-color: $bgSecondary;
-    margin: 15px 10px;
+    background-color: $bg-secondary;
     padding: 10px;
     border-radius: 15px;
 

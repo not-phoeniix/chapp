@@ -84,15 +84,15 @@ function LoginWidget(props: StatusProps) {
             <input type="submit" value="Sign In" />
         </form>
 
-        <p><a
-            href="javascript:void(0)"
+        <p><span
+            className="clickable"
             onClick={(e) => {
                 e.preventDefault();
                 root.render(SignupWidget(props));
             }}
         >
             sign up...
-        </a></p>
+        </span></p>
     </div>;
 }
 
@@ -118,15 +118,15 @@ function SignupWidget(props: StatusProps) {
             <input type="submit" value="Sign Up" />
         </form>
 
-        <p><a
-            href="javascript:void(0)"
+        <p><span
+            className="clickable"
             onClick={(e) => {
                 e.preventDefault();
                 root.render(LoginWidget(props));
             }}
         >
             log in.....
-        </a></p>
+        </span></p>
     </div>;
 }
 

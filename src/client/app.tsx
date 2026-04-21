@@ -22,9 +22,9 @@ const Titlebar = (props: ChatProps) => (
         </div>
         <div className="grow"></div>
         <div className="flex horiz items-right">
-            <a href="/logout">Log out</a>
-            <a href="/settings">Settings</a>
-            <p>{localStorage.getItem(CacheKeys.USERNAME)}</p>
+            <p>@{localStorage.getItem(CacheKeys.USERNAME)}</p>
+            <a href="/settings"><i className="nf nf-fa-cog"></i></a>
+            <a href="/logout"><i className="nf nf-md-exit_run"></i></a>
         </div>
     </nav>
 );
@@ -49,18 +49,18 @@ async function onChannelAddCreate(
 
 const ChannelsWindow = (props: ChatProps) => {
     const Channel = (channel: Channel) => {
-        let classes = "flex horiz channel-label";
+        let classes = "flex horiz clickable";
         if (props.openChannel.value.name === channel.name) {
             classes += " focused";
         }
 
         return <div className={classes}>
-            <a className="grow" href="javascript:void(0)" onClick={(e) => {
+            <span className="grow accent" onClick={(e) => {
                 e.preventDefault();
                 props.openChannel.set(channel);
-            }}>#{channel.name}</a>
+            }}>#{channel.name}</span>
 
-            <a href="javascript:void(0)" onClick={async (e) => {
+            <span className="clickable" onClick={async (e) => {
                 e.preventDefault();
 
                 await api.deleteChannel(channel);
@@ -68,13 +68,13 @@ const ChannelsWindow = (props: ChatProps) => {
 
                 return false;
             }}>
-                [del]
-            </a>
+                <i className="nf nf-oct-x"></i>
+            </span>
         </div>;
     };
 
-    return <div className="round-bg">
-        <form className="flex horiz " onSubmit={(e) => onChannelAddCreate(e, props)}>
+    return <div className="round-bg channels">
+        <form className="flex horiz" onSubmit={(e) => onChannelAddCreate(e, props)}>
             <input
                 className="grow"
                 type="text"
@@ -89,6 +89,24 @@ const ChannelsWindow = (props: ChatProps) => {
             {props.channels.value.map(Channel)}
         </div>
     </div >;
+};
+
+const onChatSubmit = (
+    e: SubmitEvent<HTMLFormElement>,
+    props: ChatProps
+) => {
+    e.preventDefault();
+
+    const textbox = e.target.querySelector("#message-textbox")! as HTMLInputElement;
+
+    const msg = textbox.value;
+
+    if (msg) {
+        console.log("msg:", msg, "!!!!");
+        textbox.value = "";
+    }
+
+    return false;
 };
 
 const ChatWindow = (props: ChatProps) => {
@@ -111,10 +129,25 @@ const ChatWindow = (props: ChatProps) => {
 
     const inner = messages.length > 0
         ? messages.map(Message)
-        : <h3 className="center-in-parent">no messages yet!</h3>;
+        : <h3>no messages yet!</h3>;
 
-    return <div className="round-bg grow">
-        {inner}
+    return <div className="round-bg grow chat">
+        <div className={`grow ${messages.length === 0 ? "flex center" : ""}`}>
+            {inner}
+        </div>
+
+        <form
+            className="flex horiz"
+            onSubmit={(e) => onChatSubmit(e, props)}
+        >
+            <input
+                id="message-textbox"
+                className="grow"
+                type="text"
+                placeholder="type message..."
+            />
+            <input type="submit" value="send" />
+        </form>
     </div>;
 };
 
@@ -142,14 +175,15 @@ const RootWidget = () => {
     // then fetch and overwrite the channels when it's done
     useEffect(() => {
         (async () => {
-            setChannels(await api.fetchChannels());
-            localStorage.setItem(CacheKeys.CHANNELS, JSON.stringify(channels));
+            const fetchedChannels = await api.fetchChannels();
+            setChannels(fetchedChannels);
+            localStorage.setItem(CacheKeys.CHANNELS, JSON.stringify(fetchedChannels));
 
             // set open channel to first fetched channel if 
             //   current one cannot be found in the new fetch
-            if (channels.findIndex((c => c.name === openChannel.name)) === -1) {
-                if (channels[0]) {
-                    setOpenChannel(channels[0]);
+            if (fetchedChannels.findIndex((c => c.name === openChannel.name)) === -1) {
+                if (fetchedChannels[0]) {
+                    setOpenChannel(fetchedChannels[0]);
                 } else {
                     setOpenChannel({
                         name: "no channels yet!",
