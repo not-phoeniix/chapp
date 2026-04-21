@@ -117,10 +117,18 @@ h3 {
     flex-grow: 1;
 }
 
-.flex.horiz {
+.flex {
     display: flex;
-    align-items: center;
-    justify-content: space-between;
+    align-items: stretch;
+    justify-content: stretch;
+
+    &.vert {
+        flex-direction: column;
+    }
+
+    &.horiz {
+        flex-direction: row;
+    }
 }
 
 .flex.center {

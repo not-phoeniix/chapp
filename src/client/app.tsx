@@ -19,7 +19,6 @@ interface ChatProps {
 const Titlebar = (props: ChatProps) => (
     <nav className="titlebar flex horiz round-bg">
         <div className="flex horiz items-left">
-            <h1>ChApp</h1>
             <h2>#{props.openChannel.value.name}</h2>
         </div>
         <div className="grow"></div>
@@ -75,7 +74,13 @@ const ChannelsWindow = (props: ChatProps) => {
         </div>;
     };
 
-    return <div className="round-bg channels">
+    return <div className="round-bg channels flex vert">
+        <h1>ChApp</h1>
+
+        <div className="grow">
+            {props.channels.value.map(Channel)}
+        </div>
+
         <form className="flex horiz" onSubmit={(e) => onChannelAddCreate(e, props)}>
             <input
                 className="grow"
@@ -86,10 +91,6 @@ const ChannelsWindow = (props: ChatProps) => {
             />
             <input type="submit" value="+" />
         </form>
-
-        <div>
-            {props.channels.value.map(Channel)}
-        </div>
     </div >;
 };
 
@@ -104,8 +105,6 @@ const onChatSubmit = async (
     const msg = textbox.value;
 
     if (msg) {
-        console.log("msg:", msg, "!!!!");
-
         await api.sendMessage(
             msg,
             localStorage.getItem(CacheKeys.USERNAME)!,
@@ -147,7 +146,7 @@ const ChatWindow = (props: ChatProps) => {
         ? messages.map(Message)
         : <h3>no messages yet!</h3>;
 
-    return <div className="round-bg grow chat">
+    return <div className="round-bg grow chat flex vert">
         <div className={`grow ${messages.length === 0 ? "flex center" : ""}`}>
             {inner}
         </div>
