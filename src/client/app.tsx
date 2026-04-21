@@ -6,9 +6,11 @@ import { Variable, CacheKeys } from "./types";
 // alias types just so i don't have to type api every time
 type Channel = api.Channel;
 type Message = api.Message;
+type Account = api.Account;
 
 interface ChatProps {
     channels: Variable<Channel[]>;
+    accounts: Variable<Account[]>;
     openChannel: Variable<Channel>;
     shouldRefresh: Variable<boolean>;
     markRefresh: () => void;
@@ -91,7 +93,7 @@ const ChannelsWindow = (props: ChatProps) => {
     </div >;
 };
 
-const onChatSubmit = (
+const onChatSubmit = async (
     e: SubmitEvent<HTMLFormElement>,
     props: ChatProps
 ) => {
@@ -103,6 +105,13 @@ const onChatSubmit = (
 
     if (msg) {
         console.log("msg:", msg, "!!!!");
+
+        await api.sendMessage(
+            msg,
+            localStorage.getItem(CacheKeys.USERNAME)!,
+            props.openChannel.value.name
+        );
+
         textbox.value = "";
     }
 
@@ -112,20 +121,27 @@ const onChatSubmit = (
 const ChatWindow = (props: ChatProps) => {
     const [messages, setMessages] = useState<Message[]>([]);
 
-    // fetch all messages from inputted open channel
+    // fetch all messages from inputted open channel 
+    //   (refetches when changing open channel too)
     useEffect(() => {
         (async () => {
             const fetchMessages = await api.fetchMessages(props.openChannel.value);
             setMessages(fetchMessages);
         })();
-    }, [props.shouldRefresh.value]);
+    }, [props.shouldRefresh.value, props.openChannel.value, props.channels.value]);
 
-    const Message = (message: Message) => (
-        <div className="message">
-            <p className="username">{message.from}</p>
-            <p className="message-content">{message.content}</p>
-        </div>
-    );
+    const Message = (message: Message) => {
+        const account = props.accounts.value.find(
+            acc => acc.id === message.from
+        );
+
+        const from = account?.username ?? message.from;
+
+        return <p className="message">
+            <span className="username accent">{from}</span>:
+            <span className="content">{message.content}</span>
+        </p>
+    };
 
     const inner = messages.length > 0
         ? messages.map(Message)
@@ -160,10 +176,15 @@ const RootWidget = () => {
     // ~~~ try to get cached values ~~~
 
     const channelsCached = localStorage.getItem(CacheKeys.CHANNELS);
+    const accountsCached = localStorage.getItem(CacheKeys.ACCOUNTS);
     const openChannelIndex = Number(localStorage.getItem(CacheKeys.OPEN_CHANNEL_INDEX) ?? -1);
 
     const [channels, setChannels] = useState<Channel[]>(
         channelsCached ? JSON.parse(channelsCached) : []
+    );
+
+    const [accounts, setAccounts] = useState<Account[]>(
+        accountsCached ? JSON.parse(accountsCached) : []
     );
 
     // try to get open channel, default to "loading" empty channel
@@ -178,6 +199,10 @@ const RootWidget = () => {
             const fetchedChannels = await api.fetchChannels();
             setChannels(fetchedChannels);
             localStorage.setItem(CacheKeys.CHANNELS, JSON.stringify(fetchedChannels));
+
+            const fetchedAccounts = await api.fetchAccounts();
+            setAccounts(fetchedAccounts);
+            localStorage.setItem(CacheKeys.ACCOUNTS, JSON.stringify(fetchedAccounts));
 
             // set open channel to first fetched channel if 
             //   current one cannot be found in the new fetch
@@ -200,6 +225,10 @@ const RootWidget = () => {
         channels: {
             value: channels,
             set: setChannels,
+        },
+        accounts: {
+            value: accounts,
+            set: setAccounts,
         },
         openChannel: {
             value: openChannel,

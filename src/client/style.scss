@@ -159,3 +159,13 @@ h3 {
         margin: 0;
     }
 }
+
+.message {
+    & .username {
+        font-weight: bold;
+    }
+
+    & .content {
+        margin-left: 5px;
+    }
+}

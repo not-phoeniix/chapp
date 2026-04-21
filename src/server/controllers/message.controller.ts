@@ -2,7 +2,7 @@ import { Message, Account, Channel } from "../models";
 import { Request, Response } from "express";
 
 const getMessage = async (req: Request, res: Response) => {
-    const { id } = req.body;
+    const { id } = req.query;
 
     if (!id) {
         return res.status(400).json({ error: "Missing required parameters!" });
@@ -34,8 +34,8 @@ const getMessage = async (req: Request, res: Response) => {
 };
 
 const sendMessage = async (req: Request, res: Response) => {
-    // send message input is the unique username 
-    //   and the content of the message
+    // send message input is the unique username, 
+    //   unique channel name, and the content of the message
     const { from, content, channel } = req.body;
 
     if (!from || !content || !channel) {
@@ -48,9 +48,9 @@ const sendMessage = async (req: Request, res: Response) => {
             return res.status(404).json({ error: "Account username does not exist!" });
         }
 
-        const channelDoc = await Channel.findById(channel);
+        const channelDoc = await Channel.findOne({ name: channel });
         if (!channelDoc) {
-            return res.status(404).json({ error: "Inputted channel ID doesn't exist!" });
+            return res.status(404).json({ error: "Inputted channel doesn't exist!" });
         }
 
         const newMessage = new Message({
@@ -59,6 +59,10 @@ const sendMessage = async (req: Request, res: Response) => {
             channel: channelDoc._id,
         });
         await newMessage.save();
+
+        // add new message to channel refs as well
+        channelDoc.messages.push(newMessage._id);
+        await channelDoc.save();
 
         // give the frontend the id back so it can be used 
         //   without having to do another fetch

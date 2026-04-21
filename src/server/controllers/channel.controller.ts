@@ -43,7 +43,7 @@ const getChannels = async (req: Request, res: Response) => {
         const channels = (await Channel.find())
             .map(c => ({
                 name: c.name,
-                messages: c.messages.map(m => m.toString()),
+                messages: c.messages.map(id => id.toString()),
                 id: c.id,
             }));
 

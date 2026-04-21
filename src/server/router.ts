@@ -14,6 +14,7 @@ const router = (app: express.Express) => {
     app.post("/login", mid.requiresSecure, mid.requiresLogout, Account.login);
     app.post("/signup", mid.requiresSecure, mid.requiresLogout, Account.signup);
     app.get("/logout", mid.requiresLogin, Account.logout);
+    app.get("/accounts", mid.requiresSecure, mid.requiresLogin, Account.getAccounts);
 
     app.post("/message", mid.requiresSecure, mid.requiresLogin, Message.sendMessage);
     app.get("/message", mid.requiresSecure, mid.requiresLogin, Message.getMessage);

@@ -4,6 +4,7 @@ export enum CacheKeys {
     OPEN_CHANNEL_INDEX = "chappOpenChannelIndex",
     CHANNELS = "chappChannels",
     USERNAME = "chappUsername",
+    ACCOUNTS = "chappAccounts",
 };
 
 export interface Variable<T> {

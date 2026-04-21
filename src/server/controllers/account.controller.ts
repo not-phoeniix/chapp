@@ -61,8 +61,26 @@ const signup = async (req: Request, res: Response) => {
     }
 };
 
+const getAccounts = async (req: Request, res: Response) => {
+    try {
+        const doc = await Account.find();
+
+        return res.json(doc.map((acc) => ({
+            username: acc.username,
+            id: acc.id,
+            // TODO: color info in model and controller
+            // color: acc.color,
+        })));
+
+    } catch (err) {
+        console.log(err);
+        return res.status(500).json({ error: "Internal error occured!" });
+    }
+};
+
 export default {
     logout,
     login,
-    signup
+    signup,
+    getAccounts,
 };
