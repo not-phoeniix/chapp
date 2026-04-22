@@ -1,13 +1,16 @@
 @import "https://www.nerdfonts.com/assets/css/webfont.css";
 // ~~~ vars ~~~
-$bg : #121118;
-$bg-secondary: #1d1e25;
-$fg: #fafafa;
-$accent: #ee1443;
 $gaps-inner: 15px;
 $gaps-outer: 30px;
-$button-hover: rgba($fg, 0.03);
-$button-selected: rgba($fg, 0.06);
+$button-hover: rgba(var(--bg-secondary), 0.9);
+$button-selected: rgba(var(--fg), 0.06);
+
+:root {
+    --bg: #ffffff;
+    --bg-secondary: #000000;
+    --fg: #fafafa;
+    --accent: #ff0000;
+}
 
 // ~~~ general styles ~~~
 section,
@@ -16,23 +19,23 @@ body {
     height: 100%;
     margin: 0;
     padding: 0;
-    background-color: $bg;
+    background-color: var(--bg);
 }
 
 p,
 div,
 span {
-    color: $fg;
+    color: var(--fg);
 }
 
 h1,
 h2,
 h3 {
-    color: $accent;
+    color: var(--accent);
 }
 
 .titlebar {
-    background-color: $bg-secondary;
+    background-color: var(--bg-secondary);
 
     & * {
         padding: 0;
@@ -48,7 +51,7 @@ h3 {
     }
 
     & a {
-        color: $fg;
+        color: var(--fg);
         padding: 5px;
         background-color: unset;
         border-radius: 5px;
@@ -56,16 +59,16 @@ h3 {
 
         &:link,
         &:visited {
-            color: $fg;
+            color: var(--fg);
         }
 
         &:focus,
         &:active {
-            color: $accent;
+            color: var(--accent);
         }
 
         &:hover {
-            color: $fg;
+            color: var(--fg);
             background-color: $button-hover;
         }
     }
@@ -91,7 +94,7 @@ h3 {
 }
 
 .clickable {
-    background-color: $bg-secondary;
+    background-color: var(--bg-secondary);
     padding: 5px;
     border-radius: 5px;
 
@@ -106,11 +109,11 @@ h3 {
 }
 
 .accent {
-    color: $accent;
+    color: var(--accent);
 }
 
 .accent-bg {
-    background-color: $accent;
+    background-color: var(--accent);
 }
 
 .grow {
@@ -162,7 +165,7 @@ h3 {
 }
 
 .round-bg {
-    background-color: $bg-secondary;
+    background-color: var(--bg-secondary);
     padding: 10px;
     border-radius: 15px;
 
@@ -207,18 +210,18 @@ h3 {
 }
 
 .login-field {
-    background-color: $bg-secondary;
-    color: $fg;
-    border: 2px solid $fg;
+    background-color: var(--bg-secondary);
+    color: var(--fg);
+    border: 2px solid var(--fg);
 }
 
 .login-submit {
     margin-top: 30px;
-    background-color: $accent;
-    color: $fg;
+    background-color: var(--accent);
+    color: var(--fg);
 
     &:hover {
-        background-color: rgba($accent, 0.8);
+        background-color: rgba(var(--accent), 0.8);
         cursor: pointer;
     }
 }

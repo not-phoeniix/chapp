@@ -2,6 +2,7 @@ import { JSX, SubmitEvent, useState } from "react";
 import { Container, createRoot, Root } from "react-dom/client";
 import { formFetch } from "./utils";
 import { CacheKeys, Variable } from "./types";
+import * as theme from "./theme";
 
 enum Page {
     LOGIN,
@@ -173,6 +174,26 @@ function SignupWidget(props: Props) {
     </div>;
 }
 
+function ThemeButton() {
+    const [currentTheme, setCurrentTheme] = useState(theme.CurrentTheme);
+
+    // easy object value equality check by comparing strings
+    const isDark = JSON.stringify(currentTheme) === JSON.stringify(theme.DEFAULT_DARK);
+
+    return <p><span
+        className="clickable"
+        onClick={(e) => {
+            e.preventDefault();
+            theme.setTheme(isDark ? theme.DEFAULT_LIGHT : theme.DEFAULT_DARK);
+
+            // we do this to actually mark the theme as changed (different object)
+            setCurrentTheme(JSON.parse(JSON.stringify(theme.CurrentTheme)));
+        }}
+    >
+        {isDark ? "set light mode" : "set dark mode"}
+    </span></p>;
+}
+
 function PageSwitcher(props: Props) {
     let page: JSX.Element | null = null;
 
@@ -199,7 +220,7 @@ function RootWidget() {
         },
         openPage: {
             value: openPage,
-            set: setOpenPage
+            set: setOpenPage,
         }
     };
 
@@ -209,6 +230,7 @@ function RootWidget() {
             <div className="flex vert" style={{ width: "250px" }}>
                 {PageSwitcher(props)}
             </div>
+            {ThemeButton()}
             <p className={!props.status.value ? "hidden" : ""}>
                 <b>Status: </b>
                 <em>{props.status.value}</em>
@@ -220,6 +242,8 @@ function RootWidget() {
 function init() {
     root = createRoot(document.getElementById("content") as Container);
     root.render(<RootWidget />);
+
+    theme.restoreTheme();
 };
 
 window.onload = init;

@@ -2,6 +2,7 @@ import { Container, createRoot } from "react-dom/client";
 import { useState, useEffect, SubmitEvent } from "react";
 import * as api from "./apiHandler";
 import { Variable, CacheKeys } from "./types";
+import * as theme from "./theme";
 
 // alias types just so i don't have to type api every time
 type Channel = api.Channel;
@@ -254,6 +255,8 @@ const RootWidget = () => {
 function init() {
     const root = createRoot(document.getElementById("content") as Container);
     root.render(<RootWidget />);
+
+    theme.restoreTheme();
 };
 
 window.onload = init;
