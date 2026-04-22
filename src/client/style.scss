@@ -2,14 +2,13 @@
 // ~~~ vars ~~~
 $gaps-inner: 15px;
 $gaps-outer: 30px;
-$button-hover: rgba(var(--bg-secondary), 0.9);
-$button-selected: rgba(var(--fg), 0.06);
 
 :root {
-    --bg: #ffffff;
-    --bg-secondary: #000000;
-    --fg: #fafafa;
-    --accent: #ff0000;
+    --bg: rgb(220, 220, 220);
+    --bg-secondary: rgb(255, 255, 255);
+    --button-hover: rgb(138, 138, 138);
+    --fg: rgb(0, 0, 0);
+    --accent: rgb(255, 0, 0);
 }
 
 // ~~~ general styles ~~~
@@ -69,7 +68,7 @@ h3 {
 
         &:hover {
             color: var(--fg);
-            background-color: $button-hover;
+            background-color: var(--button-hover);
         }
     }
 
@@ -99,12 +98,17 @@ h3 {
     border-radius: 5px;
 
     &:hover {
-        background-color: $button-hover;
+        background-color: var(--button-hover);
         cursor: pointer;
     }
 
     &.focused {
-        background-color: $button-selected;
+        background-color: var(--accent);
+
+        &,
+        & * {
+            color: var(--fg);
+        }
     }
 }
 
@@ -221,7 +225,17 @@ h3 {
     color: var(--fg);
 
     &:hover {
-        background-color: rgba(var(--accent), 0.8);
+        background-color: var(--button-hover);
         cursor: pointer;
+    }
+}
+
+.login-theme-button {
+    position: fixed;
+    right: 10px;
+    bottom: 10px;
+
+    & * {
+        font-size: 2rem;
     }
 }

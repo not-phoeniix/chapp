@@ -3,23 +3,34 @@ import { CacheKeys } from "./types";
 export interface Theme {
     bg: string;
     bgSecondary: string;
+    buttonHover: string;
     fg: string;
     accent: string;
 }
 
 export const DEFAULT_DARK: Theme = Object.seal({
-    bg: "#121118",
-    bgSecondary: "#242231",
-    fg: "#fafafa",
-    accent: "#ee1443",
+    bg: "rgb(18, 17, 24)",
+    bgSecondary: "rgb(24, 24, 35)",
+    buttonHover: "rgba(250, 250, 250, 0.05)",
+    fg: "rgb(250, 250, 250)",
+    accent: "rgb(238, 20, 67)",
 });
 
 export const DEFAULT_LIGHT: Theme = Object.seal({
-    bg: "#d1d3f1",
-    bgSecondary: "#e8f0f8",
-    fg: "#111111",
-    accent: "#ee1443",
+    bg: "rgb(209, 211, 241)",
+    bgSecondary: "rgb(232, 240, 248)",
+    buttonHover: "rgba(0, 0, 0, 0.05)",
+    fg: "rgb(17, 17, 17)",
+    accent: "rgb(238, 20, 67)",
 });
+
+export const CUSTOM: Theme = {
+    bg: "rgb(0, 0, 0)",
+    bgSecondary: "rgb(52, 52, 52)",
+    buttonHover: "rgba(0, 255, 0, 0.05)",
+    fg: "rgb(255, 255, 255)",
+    accent: "rgb(40, 255, 108)"
+};
 
 export let CurrentTheme: Theme = DEFAULT_DARK;
 
@@ -32,6 +43,7 @@ export function setTheme(theme: Theme) {
     setBgSecondary(theme.bgSecondary);
     setFg(theme.fg);
     setAccent(theme.accent);
+    setButtonHover(theme.buttonHover);
 
     saveTheme();
 }
@@ -66,3 +78,15 @@ export const setAccent = (color: string) => {
     setVar("--accent", color);
     CurrentTheme.accent = color;
 };
+export const setButtonHover = (color: string) => {
+    setVar("--button-hover", color);
+    CurrentTheme.buttonHover = color;
+}
+
+export function equals(a: Theme, b: Theme) {
+    return a.bg === b.bg &&
+        a.bgSecondary === b.bgSecondary &&
+        a.buttonHover === b.buttonHover &&
+        a.fg === b.fg &&
+        a.accent === b.accent;
+}

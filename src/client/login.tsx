@@ -178,10 +178,14 @@ function ThemeButton() {
     const [currentTheme, setCurrentTheme] = useState(theme.CurrentTheme);
 
     // easy object value equality check by comparing strings
-    const isDark = JSON.stringify(currentTheme) === JSON.stringify(theme.DEFAULT_DARK);
+    const isDark = theme.equals(currentTheme, theme.DEFAULT_DARK);
 
-    return <p><span
-        className="clickable"
+    const icon = isDark
+        ? <i className="nf nf-oct-sun"></i>
+        : <i className="nf nf-oct-moon"></i>;
+
+    return <span
+        className="clickable login-theme-button"
         onClick={(e) => {
             e.preventDefault();
             theme.setTheme(isDark ? theme.DEFAULT_LIGHT : theme.DEFAULT_DARK);
@@ -190,8 +194,8 @@ function ThemeButton() {
             setCurrentTheme(JSON.parse(JSON.stringify(theme.CurrentTheme)));
         }}
     >
-        {isDark ? "set light mode" : "set dark mode"}
-    </span></p>;
+        {icon}
+    </span>;
 }
 
 function PageSwitcher(props: Props) {
@@ -225,17 +229,18 @@ function RootWidget() {
     };
 
     return <div className="root-ui-flex center">
-        <div className="flex vert center">
+        <div className="flex vert center round-bg" style={{ padding: "40px" }}>
             <h1 className="app-logo-login">ChApp</h1>
             <div className="flex vert" style={{ width: "250px" }}>
                 {PageSwitcher(props)}
             </div>
-            {ThemeButton()}
             <p className={!props.status.value ? "hidden" : ""}>
                 <b>Status: </b>
                 <em>{props.status.value}</em>
             </p>
         </div>
+
+        {ThemeButton()}
     </div>;
 };
 

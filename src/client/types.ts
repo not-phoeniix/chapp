@@ -6,6 +6,7 @@ export enum CacheKeys {
     USERNAME = "chappUsername",
     ACCOUNTS = "chappAccounts",
     THEME = "chappTheme",
+    CUSTOM_THEME = "chappCustomTheme",
 };
 
 export interface Variable<T> {
