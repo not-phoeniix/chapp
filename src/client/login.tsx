@@ -1,13 +1,23 @@
-import { SubmitEvent, useState } from "react";
+import { JSX, SubmitEvent, useState } from "react";
 import { Container, createRoot, Root } from "react-dom/client";
-import { StatusProps, StatusWidget, formFetch } from "./utils";
-import { CacheKeys } from "./types";
+import { formFetch } from "./utils";
+import { CacheKeys, Variable } from "./types";
+
+enum Page {
+    LOGIN,
+    SIGN_UP,
+};
+
+export interface Props {
+    status: Variable<string>;
+    openPage: Variable<Page>;
+};
 
 let root: Root;
 
 async function onLoginSubmit(
     e: SubmitEvent<HTMLFormElement>,
-    props: StatusProps
+    props: Props
 ) {
     e.preventDefault();
 
@@ -34,7 +44,7 @@ async function onLoginSubmit(
 
 async function onSignupSubmit(
     e: SubmitEvent<HTMLFormElement>,
-    props: StatusProps
+    props: Props
 ) {
     e.preventDefault();
 
@@ -65,9 +75,8 @@ async function onSignupSubmit(
     return false;
 };
 
-function LoginWidget(props: StatusProps) {
+function LoginWidget(props: Props) {
     return <div>
-        <p>hi</p>
         <form
             id="login-form"
             name="login-form"
@@ -75,20 +84,35 @@ function LoginWidget(props: StatusProps) {
             action="/login"
             method="POST"
         >
-            <label htmlFor="username">Username:</label>
-            <input type="text" name="username" id="username-input" />
+            <input
+                type="text"
+                className="login-field"
+                id="username-input"
+                placeholder="username"
+            />
+            <br />
 
-            <label htmlFor="password">Password:</label>
-            <input type="password" name="password" id="password-input" />
+            <input
+                type="password"
+                className="login-field"
+                id="password-input"
+                placeholder="password "
+            />
+            <br />
 
-            <input type="submit" value="Sign In" />
+            <input
+                type="submit"
+                className="login-submit"
+                value="Sign In"
+                style={{ width: "100%" }}
+            />
         </form>
 
         <p><span
             className="clickable"
             onClick={(e) => {
                 e.preventDefault();
-                root.render(SignupWidget(props));
+                props.openPage.set(Page.SIGN_UP)
             }}
         >
             sign up...
@@ -96,9 +120,8 @@ function LoginWidget(props: StatusProps) {
     </div>;
 }
 
-function SignupWidget(props: StatusProps) {
+function SignupWidget(props: Props) {
     return <div>
-        <p>sign up plz</p>
         <form
             id="signup-form"
             name="signup-form"
@@ -106,23 +129,43 @@ function SignupWidget(props: StatusProps) {
             action="/signup"
             method="POST"
         >
-            <label htmlFor="username">Username:</label>
-            <input type="text" name="username" id="username-input" />
+            <input
+                type="text"
+                className="login-field"
+                id="username-input"
+                placeholder="username"
+            />
+            <br />
 
-            <label htmlFor="password">Password:</label>
-            <input type="password" name="password" id="password-input" />
+            <input
+                type="password"
+                className="login-field"
+                id="password-input"
+                placeholder="password"
+            />
+            <br />
 
-            <label htmlFor="password2">Repeat Password:</label>
-            <input type="password" name="password2" id="password-input2" />
+            <input
+                type="password"
+                className="login-field"
+                id="password-input2"
+                placeholder="repeat password"
+            />
+            <br />
 
-            <input type="submit" value="Sign Up" />
+            <input
+                type="submit"
+                className="login-submit"
+                value="Sign Up"
+                style={{ width: "100%" }}
+            />
         </form>
 
         <p><span
             className="clickable"
             onClick={(e) => {
                 e.preventDefault();
-                root.render(LoginWidget(props));
+                props.openPage.set(Page.LOGIN)
             }}
         >
             log in.....
@@ -130,20 +173,48 @@ function SignupWidget(props: StatusProps) {
     </div>;
 }
 
+function PageSwitcher(props: Props) {
+    let page: JSX.Element | null = null;
+
+    switch (props.openPage.value) {
+        case Page.LOGIN:
+            page = LoginWidget(props);
+            break;
+        case Page.SIGN_UP:
+            page = SignupWidget(props);
+            break;
+    }
+
+    return page;
+}
+
 function RootWidget() {
     const [status, setStatus] = useState("");
+    const [openPage, setOpenPage] = useState(Page.LOGIN);
 
-    const props: StatusProps = {
+    const props: Props = {
         status: {
             value: status,
             set: setStatus,
+        },
+        openPage: {
+            value: openPage,
+            set: setOpenPage
         }
     };
 
-    return <div>
-        {LoginWidget(props)}
-        {StatusWidget(props)}
-    </div>
+    return <div className="root-ui-flex center">
+        <div className="flex vert center">
+            <h1 className="app-logo-login">ChApp</h1>
+            <div className="flex vert" style={{ width: "250px" }}>
+                {PageSwitcher(props)}
+            </div>
+            <p className={!props.status.value ? "hidden" : ""}>
+                <b>Status: </b>
+                <em>{props.status.value}</em>
+            </p>
+        </div>
+    </div>;
 };
 
 function init() {
