@@ -6,7 +6,7 @@ interface Props {
     markRefresh: () => void;
 };
 
-function onPasswordChangeSubmit(e: SubmitEvent<HTMLFormElement>, props: Props) {
+function onPasswordChangeSubmit(e: SubmitEvent<HTMLFormElement> /*,props: Props*/) {
     e.preventDefault();
     console.log("hello...");
 }
@@ -47,7 +47,7 @@ function SettingsWidget(props: Props) {
         <form
             action="/changePassword"
             method="POST"
-            onSubmit={(e) => onPasswordChangeSubmit(e, props)}
+            onSubmit={(e) => onPasswordChangeSubmit(e)}
         >
             <input type="submit" value="Submit" />
         </form>
