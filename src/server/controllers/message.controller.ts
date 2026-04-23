@@ -21,7 +21,7 @@ const getMessage = async (req: Request, res: Response) => {
         const channel = (await Channel.findById(doc.channel))!;
 
         const data: sharedTypes.Message = {
-            fromId: acc.id,
+            fromId: acc?.id ?? doc.from._id.toString(),
             content: doc.content,
             channelId: channel.id,
             sentAt: doc.sentAt,

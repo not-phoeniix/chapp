@@ -24,7 +24,10 @@ export interface AccountDoc extends Account, mongoose.Document {
 // ~~~ functions for schema ~~~
 
 async function authenticate(username: string, password: string): Promise<AccountDoc | null> {
-    const doc: AccountDoc | null = await model.findOne({ username });
+    // case-insensitive find
+    const doc: AccountDoc | null = await model.findOne({
+        username: new RegExp(`^${username}$`, "i")
+    });
 
     if (doc) {
         const match = await doc.comparePassword(password);
@@ -82,9 +85,14 @@ const statics = {
     authenticate,
 } as const;
 
+const collation = {
+    locale: "en",
+    strength: 1,
+} as const;
+
 const schema = new mongoose.Schema(
     schemaDef,
-    { methods, statics }
+    { methods, statics, collation }
 );
 
 // ~~~ middleware defined in model (cool) ~~~

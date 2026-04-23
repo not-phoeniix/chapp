@@ -60,13 +60,14 @@ const ChannelsWindow = (props: ChatProps) => {
         return <div className={classes}>
             <span className="grow accent" onClick={(e) => {
                 e.preventDefault();
-
                 props.openChannel.set(channel);
                 localStorage.setItem(
                     CacheKeys.OPEN_CHANNEL_INDEX,
                     idx.toString()
                 );
-            }}>#{channel.name}</span>
+            }}>
+                #{channel.name}
+            </span>
 
             <span className="clickable" onClick={async (e) => {
                 e.preventDefault();

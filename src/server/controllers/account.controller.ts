@@ -50,6 +50,12 @@ const signup = async (req: Request, res: Response) => {
         return res.status(400).json({ error: "Passwords do not match!" });
     }
 
+    // check if already existing (case-insensitive)
+    const existing = await Account.findOne({ username: new RegExp(`^${username}$`, "i") });
+    if (existing) {
+        return res.status(400).json({ error: "Username already in use!" });
+    }
+
     try {
         const newAccount = new Account({ username, password: pass });
         await newAccount.save();
