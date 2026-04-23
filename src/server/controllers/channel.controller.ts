@@ -1,6 +1,7 @@
 import { Channel } from "../models";
 import { Request, Response } from "express";
 import * as channelModel from "../models/channel.model";
+import * as sharedTypes from "../../sharedTypes";
 
 const getChannel = async (req: Request, res: Response) => {
     // can input either name or id for fetching (prefer id)
@@ -23,14 +24,16 @@ const getChannel = async (req: Request, res: Response) => {
             return res.status(404).json({ error: "Channel doesn't exist!" });
         }
 
-        return res.json({
-            name,
+        const data: sharedTypes.Channel = {
+            name: name,
             // array of ID strings and not full message data object .
             //   allows client to load each message as needed
             //   and reduce data being sent
             messages: doc.messages.map(m => m.toString()),
-            id: doc.id,
-        });
+            id: doc.id
+        };
+
+        return res.json(data);
 
     } catch (err) {
         console.log(err);

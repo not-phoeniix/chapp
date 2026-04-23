@@ -3,7 +3,7 @@ import { Dispatch, SetStateAction } from "react";
 export enum CacheKeys {
     OPEN_CHANNEL_INDEX = "chappOpenChannelIndex",
     CHANNELS = "chappChannels",
-    USERNAME = "chappUsername",
+    CURRENT_ACCOUNT = "chappCurrentAccount",
     ACCOUNTS = "chappAccounts",
     THEME = "chappTheme",
     CUSTOM_THEME = "chappCustomTheme",

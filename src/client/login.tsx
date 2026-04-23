@@ -36,7 +36,10 @@ async function onLoginSubmit(
     props.status.set(msg);
 
     if (json.redirect) {
-        localStorage.setItem(CacheKeys.USERNAME, username);
+        localStorage.setItem(
+            CacheKeys.CURRENT_ACCOUNT,
+            JSON.stringify(json.account)
+        );
         window.location = json.redirect;
     }
 
@@ -69,7 +72,10 @@ async function onSignupSubmit(
     props.status.set(msg);
 
     if (json.redirect) {
-        localStorage.setItem(CacheKeys.USERNAME, username);
+        localStorage.setItem(
+            CacheKeys.CURRENT_ACCOUNT,
+            JSON.stringify(json.account)
+        );
         window.location = json.redirect;
     }
 

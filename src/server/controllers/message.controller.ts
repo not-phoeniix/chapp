@@ -1,5 +1,6 @@
 import { Message, Account, Channel } from "../models";
 import { Request, Response } from "express";
+import * as sharedTypes from "../../sharedTypes";
 
 const getMessage = async (req: Request, res: Response) => {
     const { id } = req.query;
@@ -19,13 +20,16 @@ const getMessage = async (req: Request, res: Response) => {
         const acc = (await Account.findById(doc.from))!;
         const channel = (await Channel.findById(doc.channel))!;
 
-        return res.json({
-            from: acc.id,
+        const data: sharedTypes.Message = {
+            fromId: acc.id,
             content: doc.content,
-            channel: channel.id,
-            sentAt: doc.content,
-            editedAt: doc.editedAt,
-        });
+            channelId: channel.id,
+            sentAt: doc.sentAt,
+            editedAt: doc.editedAt ?? undefined,
+            id: doc.id
+        };
+
+        return res.json(data);
 
     } catch (err) {
         console.log(err);
@@ -43,9 +47,9 @@ const sendMessage = async (req: Request, res: Response) => {
     }
 
     try {
-        const accountDoc = await Account.findOne({ username: from });
+        const accountDoc = await Account.findById(from);
         if (!accountDoc) {
-            return res.status(404).json({ error: "Account username does not exist!" });
+            return res.status(404).json({ error: "Account does not exist!" });
         }
 
         const channelDoc = await Channel.findOne({ name: channel });
@@ -121,9 +125,54 @@ const editMessage = async (req: Request, res: Response) => {
     }
 };
 
+// returns an ID
+async function newMessageManual(
+    content: string,
+    fromId: string,
+    channelId: string
+): Promise<sharedTypes.Message | null> {
+    try {
+        const accountDoc = await Account.findById(fromId);
+        if (!accountDoc) {
+            console.warn("WARNING: failed to find account from id: ", fromId);
+            return null;
+        }
+
+        const channelDoc = await Channel.findById(channelId);
+        if (!channelDoc) {
+            console.warn("WARNING: failed to find channel from id: ", channelId);
+            return null;
+        }
+
+        const newMessage = new Message({
+            from: accountDoc._id,
+            content,
+            channel: channelDoc._id,
+        });
+        await newMessage.save();
+
+        // add new message to channel refs as well
+        channelDoc.messages.push(newMessage._id);
+        await channelDoc.save();
+
+        return {
+            content: newMessage.content,
+            fromId: newMessage.from._id.toString(),
+            channelId: newMessage.channel._id.toString(),
+            sentAt: newMessage.sentAt,
+            editedAt: newMessage.editedAt ?? undefined,
+            id: newMessage.id
+        };
+    } catch (err) {
+        console.log(err);
+        return null;
+    }
+}
+
 export default {
     sendMessage,
     deleteMessage,
     editMessage,
     getMessage,
+    newMessageManual,
 };

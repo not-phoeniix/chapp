@@ -29,6 +29,8 @@
     "mongoose": "^8.19.3",
     "redis": "^5.9.0",
     "serve-favicon": "^2.5.1",
+    "socket.io": "^4.8.3",
+    "socket.io-client": "^4.8.3",
     "underscore": "^1.13.7"
   },
   "devDependencies": {
@@ -45,6 +47,7 @@
     "@types/react-dom": "^19.2.3",
     "@types/redis": "^4.0.10",
     "@types/serve-favicon": "^2.5.7",
+    "@types/socket.io": "^3.0.1",
     "@types/underscore": "^1.13.0",
     "babel-loader": "^10.1.1",
     "copy-webpack-plugin": "^14.0.0",

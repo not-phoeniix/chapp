@@ -1,3 +1,6 @@
+import { Account } from "../sharedTypes";
+import { CacheKeys } from "./types";
+
 type FetchMethod = "GET" | "DELETE" | "POST" | "PATCH";
 
 export async function fastFetch(url: string, body?: object, method: FetchMethod = "GET") {
@@ -22,4 +25,8 @@ export async function formFetch(form: HTMLFormElement, body: object) {
     });
 
     return res;
+}
+
+export function getCurrentAccount(): Account {
+    return JSON.parse(localStorage.getItem(CacheKeys.CURRENT_ACCOUNT)!);
 }

@@ -3,11 +3,11 @@ import { useState, useEffect, SubmitEvent, useRef } from "react";
 import * as api from "./apiHandler";
 import { Variable, CacheKeys } from "./types";
 import * as theme from "./theme";
+import { io, Socket } from "socket.io-client";
+import { SocketClientEvents, SocketServerEvents, Message, Channel, Account } from "../sharedTypes";
+import * as utils from "./utils";
 
-// alias types just so i don't have to type api every time
-type Channel = api.Channel;
-type Message = api.Message;
-type Account = api.Account;
+const socket: Socket<SocketServerEvents, SocketClientEvents> = io();
 
 interface ChatProps {
     channels: Variable<Channel[]>;
@@ -24,7 +24,7 @@ const Titlebar = (props: ChatProps) => (
         </div>
         <div className="grow"></div>
         <div className="flex horiz items-right">
-            <p>@{localStorage.getItem(CacheKeys.USERNAME)}</p>
+            <p>@{utils.getCurrentAccount().username}</p>
             <a href="/settings"><i className="nf nf-fa-cog"></i></a>
             <a href="/logout"><i className="nf nf-md-exit_run"></i></a>
         </div>
@@ -51,7 +51,7 @@ async function onChannelAddCreate(
 }
 
 const ChannelsWindow = (props: ChatProps) => {
-    const Channel = (channel: Channel) => {
+    const Channel = (channel: Channel, idx: number) => {
         let classes = "flex horiz clickable";
         if (props.openChannel.value.name === channel.name) {
             classes += " focused";
@@ -60,7 +60,12 @@ const ChannelsWindow = (props: ChatProps) => {
         return <div className={classes}>
             <span className="grow accent" onClick={(e) => {
                 e.preventDefault();
+
                 props.openChannel.set(channel);
+                localStorage.setItem(
+                    CacheKeys.OPEN_CHANNEL_INDEX,
+                    idx.toString()
+                );
             }}>#{channel.name}</span>
 
             <span className="clickable" onClick={async (e) => {
@@ -96,7 +101,7 @@ const ChannelsWindow = (props: ChatProps) => {
     </div >;
 };
 
-const onChatSubmit = async (
+const onChatSubmit = (
     e: SubmitEvent<HTMLFormElement>,
     props: ChatProps
 ) => {
@@ -107,10 +112,11 @@ const onChatSubmit = async (
     const msg = textbox.value;
 
     if (msg) {
-        await api.sendMessage(
+        socket.emit(
+            "sendMessage",
             msg,
-            localStorage.getItem(CacheKeys.USERNAME)!,
-            props.openChannel.value.name
+            utils.getCurrentAccount().id,
+            props.openChannel.value.id
         );
 
         textbox.value = "";
@@ -121,23 +127,35 @@ const onChatSubmit = async (
 
 const ChatWindow = (props: ChatProps) => {
     const [messages, setMessages] = useState<Message[]>([]);
+    const [loading, setLoading] = useState(true);
+
+    // we disconnect the event beforehand so we 
+    //   don't add messages multiple times
+    socket.off("newMessage");
+    socket.on("newMessage", (data) => {
+        // only add messages that come in from this channel
+        if (data.channelId === props.openChannel.value.id) {
+            setMessages([...messages, data]);
+        }
+    });
 
     // fetch all messages from inputted open channel 
     //   (refetches when changing open channel too)
     useEffect(() => {
-        setMessages([]);
+        setLoading(true);
         (async () => {
             const fetchMessages = await api.fetchMessages(props.openChannel.value);
             setMessages(fetchMessages);
+            setLoading(false);
         })();
     }, [props.shouldRefresh.value, props.openChannel.value, props.channels.value]);
 
     const Message = (message: Message) => {
         const account = props.accounts.value.find(
-            acc => acc.id === message.from
+            acc => acc.id === message.fromId
         );
 
-        const from = account?.username ?? message.from;
+        const from = account?.username ?? message.fromId;
 
         return <p className="message">
             <span className="username accent">{from}</span>:
@@ -153,16 +171,21 @@ const ChatWindow = (props: ChatProps) => {
         lastEl.scrollIntoView({ behavior: "instant" })
     }, [messages]);
 
-    const inner = messages.length > 0
-        ? messages.map(Message)
-        : <h3>no messages yet!</h3>;
+    const inner = loading
+        ? <h3>loading...</h3>
+        : messages.length > 0
+            ? messages.map(Message)
+            : <h3>no messages yet!</h3>;
 
     return <div
         className="round-bg grow chat flex vert"
         style={{ minHeight: "1px" }}
     >
         <div
-            className={`message-container grow ${messages.length === 0 ? "flex center" : ""}`}
+            className={`
+                message-container grow 
+                ${messages.length === 0 || loading ? "flex center" : ""}
+            `}
             style={{ minHeight: "1px" }}
             ref={containerRef}
         >
@@ -233,7 +256,8 @@ const RootWidget = () => {
                 } else {
                     setOpenChannel({
                         name: "no channels yet!",
-                        messages: []
+                        messages: [],
+                        id: "0"
                     })
                 }
 
@@ -271,6 +295,12 @@ const RootWidget = () => {
 };
 
 function init() {
+    // if cache doesn't exist for logged in user somehow, redirect to logout
+    if (!localStorage.getItem(CacheKeys.CURRENT_ACCOUNT)) {
+        window.location.href = "/logout";
+        return;
+    }
+
     const root = createRoot(document.getElementById("content") as Container);
     root.render(<RootWidget />);
 

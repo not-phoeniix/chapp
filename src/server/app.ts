@@ -9,8 +9,12 @@ import helmet from "helmet";
 import { RedisStore } from "connect-redis";
 import * as redis from "redis";
 import router from "./router";
+import { createServer } from "http";
+import { Server } from "socket.io";
+import socketRouter from "./socketRouter";
 
 import dotenv from "dotenv";
+import { SocketClientEvents, SocketServerEvents } from "../sharedTypes";
 dotenv.config();
 
 const PORT = process.env.PORT || process.env.NODE_PORT || 3000;
@@ -30,7 +34,9 @@ const redisClient = redis.createClient({
 redisClient.on("error", (err) => console.log(`Redis client error: ${err.toString()}`));
 redisClient.connect().then(() => {
     const app = express();
-    
+    const server = createServer(app);
+    const io = new Server<SocketClientEvents, SocketServerEvents>(server);
+
     const buildPath = path.resolve(`${__dirname}/../../build`);
 
     app.use(helmet());
@@ -56,8 +62,17 @@ redisClient.connect().then(() => {
 
     router(app);
 
-    app.listen(PORT, (err) => {
-        if (err) throw err;
-        console.log(`Listening on 127.0.0.1:${PORT} !!`);
+    io.on("connection", (socket) => {
+        console.log("a user has connected!");
+
+        socketRouter(socket);
+
+        socket.on("disconnect", () => {
+            console.log("a user has disconnected!");
+        });
+    });
+
+    server.listen(PORT, () => {
+        console.log(`Server listening on 127.0.0.1:${PORT} !!`);
     });
 });
