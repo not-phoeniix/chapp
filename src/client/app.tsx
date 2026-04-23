@@ -1,5 +1,5 @@
 import { Container, createRoot } from "react-dom/client";
-import { useState, useEffect, SubmitEvent } from "react";
+import { useState, useEffect, SubmitEvent, useRef } from "react";
 import * as api from "./apiHandler";
 import { Variable, CacheKeys } from "./types";
 import * as theme from "./theme";
@@ -125,6 +125,7 @@ const ChatWindow = (props: ChatProps) => {
     // fetch all messages from inputted open channel 
     //   (refetches when changing open channel too)
     useEffect(() => {
+        setMessages([]);
         (async () => {
             const fetchMessages = await api.fetchMessages(props.openChannel.value);
             setMessages(fetchMessages);
@@ -144,28 +145,45 @@ const ChatWindow = (props: ChatProps) => {
         </p>
     };
 
+    const containerRef = useRef<HTMLDivElement | null>(null);
+    useEffect(() => {
+        // scroll to bottom-most element on load
+        const children = containerRef.current!.children;
+        const lastEl = children[children.length - 1];
+        lastEl.scrollIntoView({ behavior: "instant" })
+    }, [messages]);
+
     const inner = messages.length > 0
         ? messages.map(Message)
         : <h3>no messages yet!</h3>;
 
-    // https://css-tricks.com/books/greatest-css-tricks/pin-scrolling-to-bottom/
-
-    return <div className="round-bg grow chat flex vert">
-        <div className={`message-container grow ${messages.length === 0 ? "flex center" : ""}`}>
+    return <div
+        className="round-bg grow chat flex vert"
+        style={{ minHeight: "1px" }}
+    >
+        <div
+            className={`message-container grow ${messages.length === 0 ? "flex center" : ""}`}
+            style={{ minHeight: "1px" }}
+            ref={containerRef}
+        >
             {inner}
         </div>
 
         <form
             className="flex horiz"
+            id="message-parent"
             onSubmit={(e) => onChatSubmit(e, props)}
         >
             <input
                 id="message-textbox"
                 className="grow"
                 type="text"
+                autoComplete="off"
                 placeholder="type message..."
             />
-            <input type="submit" value="send" />
+            <button type="submit" id="message-send">
+                <i className="nf nf-fa-send"></i>
+            </button>
         </form>
     </div>;
 };
