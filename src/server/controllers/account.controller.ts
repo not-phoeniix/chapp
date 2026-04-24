@@ -149,7 +149,7 @@ const changePassword = async (req: Request, res: Response) => {
         doc.password = pass;
         await doc.save();
 
-        return res.status(204).json();
+        return res.json({ redirect: "/logout" });
 
     } catch (err) {
         console.log(err);

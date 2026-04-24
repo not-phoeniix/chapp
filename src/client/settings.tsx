@@ -9,14 +9,19 @@ interface Props {
     markRefresh: () => void;
 };
 
-function onPasswordChangeSubmit(e: SubmitEvent<HTMLFormElement> /*,props: Props*/) {
+async function onPasswordChangeSubmit(e: SubmitEvent<HTMLFormElement>) {
     e.preventDefault();
 
     const prevPass = (e.target.querySelector("#pass-prev-input") as HTMLInputElement).value;
     const pass = (e.target.querySelector("#new-pass-input") as HTMLInputElement).value;
     const pass2 = (e.target.querySelector("#new-pass2-input") as HTMLInputElement).value;
 
-    console.log(prevPass, pass, pass2);
+    await api.changeAccountPassword(
+        utils.getCurrentAccount(),
+        prevPass,
+        pass,
+        pass2
+    );
 }
 
 async function onColorChangeSubmit(e: SubmitEvent<HTMLFormElement>, props: Props) {

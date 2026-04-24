@@ -42,7 +42,7 @@ export async function changeAccountPassword(
     newPass: string,
     newPass2: string
 ): Promise<void> {
-    await fastFetch(
+    const res = await fastFetch(
         "/accountPassword",
         {
             id: account.id,
@@ -52,6 +52,11 @@ export async function changeAccountPassword(
         },
         "PATCH"
     );
+
+    const json = await res.json();
+    if (json.redirect) {
+        window.location.href = json.redirect;
+    }
 }
 
 export async function fetchAccounts(): Promise<Account[]> {
