@@ -121,6 +121,11 @@ function SettingsWidget(props: Props) {
 
     const acc = utils.getCurrentAccount()!;
 
+    if (currentTheme === "custom" && !acc.premium) {
+        theme.setTheme(theme.DEFAULT_DARK);
+        props.markRefresh();
+    }
+
     return <div className="flex vert round-bg grow settings">
         <h1>!! Settings !!</h1>
 
