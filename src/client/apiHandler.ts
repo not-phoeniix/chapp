@@ -28,6 +28,32 @@ export async function deleteChannel(channel: Channel): Promise<void> {
     await fastFetch("/channel", { name: channel.name }, "DELETE");
 }
 
+export async function changeAccountColor(account: Account, color: string): Promise<void> {
+    await fastFetch(
+        "/accountColor",
+        { id: account.id, color },
+        "PATCH"
+    );
+}
+
+export async function changeAccountPassword(
+    account: Account,
+    passPrev: string,
+    newPass: string,
+    newPass2: string
+): Promise<void> {
+    await fastFetch(
+        "/accountPassword",
+        {
+            id: account.id,
+            passPrev,
+            pass: newPass,
+            pass2: newPass2
+        },
+        "PATCH"
+    );
+}
+
 export async function fetchAccounts(): Promise<Account[]> {
     const res = await fastFetch("/accounts");
     const acc = await res.json();

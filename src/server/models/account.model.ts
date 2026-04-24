@@ -10,6 +10,7 @@ const SALT_ROUNDS = 10;
 export interface Account {
     username: string;
     premium: boolean;
+    color: string;
     id?: any;
 };
 
@@ -47,6 +48,7 @@ function toMinimal(this: AccountDoc): Account {
     return {
         username: this.username,
         premium: this.premium,
+        color: this.color,
         id: this.id,
     };
 }
@@ -63,6 +65,10 @@ const schemaDef = {
         set: (name: string) => _.escape(name).trim()
     },
     password: {
+        type: String,
+        required: true,
+    },
+    color: {
         type: String,
         required: true,
     },

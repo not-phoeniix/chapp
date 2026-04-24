@@ -17,19 +17,20 @@ interface ChatProps {
     markRefresh: () => void;
 };
 
-const Titlebar = (props: ChatProps) => (
-    <nav className="titlebar flex horiz round-bg">
-        <div className="flex horiz items-left">
+const Titlebar = (props: ChatProps) => {
+    const acc = utils.getCurrentAccount();
+
+    return <nav className="titlebar flex horiz round-bg">
+        <div className="flex horiz grow items-left">
             <h2>#{props.openChannel.value.name}</h2>
         </div>
-        <div className="grow"></div>
-        <div className="flex horiz items-right">
-            <p>@{utils.getCurrentAccount().username}</p>
+        <div className="flex horiz center items-right">
+            <p style={{ color: acc.color }}>@{acc.username}</p>
             <a href="/settings"><i className="nf nf-fa-cog"></i></a>
             <a href="/logout"><i className="nf nf-md-exit_run"></i></a>
         </div>
-    </nav>
-);
+    </nav>;
+};
 
 async function onChannelAddCreate(
     e: SubmitEvent<HTMLFormElement>,
@@ -159,7 +160,10 @@ const ChatWindow = (props: ChatProps) => {
         const from = account?.username ?? message.fromId;
 
         return <p className="message">
-            <span className="username accent">{from}</span>:
+            <span
+                className="username"
+                style={{ color: account?.color ?? theme.CurrentTheme.accent }}
+            >{from}</span>:
             <span className="content">{message.content}</span>
         </p>
     };

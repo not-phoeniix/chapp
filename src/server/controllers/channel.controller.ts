@@ -1,4 +1,4 @@
-import { Channel } from "../models";
+import { Channel, Message } from "../models";
 import { Request, Response } from "express";
 import * as channelModel from "../models/channel.model";
 import * as sharedTypes from "../../sharedTypes";
@@ -105,9 +105,11 @@ const deleteChannel = async (req: Request, res: Response) => {
             return res.status(404).json({ error: "Channel doesn't exist!" });
         }
 
+        // delete all containing messages and then delete channel
+        doc.messages.forEach(async (id) => await Message.findByIdAndDelete(id));
         await doc.deleteOne();
 
-        return res.status(204);
+        return res.status(204).json();
 
     } catch (err) {
         console.log(err);

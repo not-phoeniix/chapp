@@ -94,7 +94,7 @@ const deleteMessage = async (req: Request, res: Response) => {
 
         await doc.deleteOne();
 
-        return res.status(204);
+        return res.status(204).json();
 
     } catch (err) {
         console.log(err);
@@ -115,9 +115,9 @@ const editMessage = async (req: Request, res: Response) => {
             return res.status(404).json({ error: "Message does not exist!" });
         }
 
-        await doc.updateOne({ content });
+        await doc.updateOne({ content, editedAt: Date.now() });
 
-        return res.status(204);
+        return res.status(204).json();
 
     } catch (err) {
         console.log(err);
