@@ -24,13 +24,13 @@ export const DEFAULT_LIGHT: Theme = Object.seal({
     accent: "rgb(238, 20, 67)",
 });
 
-export const CUSTOM: Theme = {
+export const DEFAULT_CUSTOM: Theme = Object.seal({
     bg: "rgb(0, 0, 0)",
     bgSecondary: "rgb(52, 52, 52)",
     buttonHover: "rgba(0, 255, 0, 0.05)",
     fg: "rgb(255, 255, 255)",
     accent: "rgb(40, 255, 108)"
-};
+});
 
 export let CurrentTheme: Theme = DEFAULT_DARK;
 
@@ -60,6 +60,19 @@ export function restoreTheme() {
     }
 
     setTheme(CurrentTheme);
+}
+
+export function getCustomTheme(): Theme {
+    const str = localStorage.getItem(CacheKeys.CUSTOM_THEME);
+    if (str) {
+        return JSON.parse(str) as Theme;
+    }
+
+    return DEFAULT_CUSTOM;
+}
+
+export function saveCustomTheme(theme: Theme) {
+    localStorage.setItem(CacheKeys.CUSTOM_THEME, JSON.stringify(theme));
 }
 
 export const setBg = (color: string) => {

@@ -36,6 +36,14 @@ export async function changeAccountColor(account: Account, color: string): Promi
     );
 }
 
+export async function accountUpgrade(account: Account): Promise<void> {
+    await fastFetch(
+        "/accountUpgrade",
+        { id: account.id },
+        "PATCH"
+    );
+}
+
 export async function changeAccountPassword(
     account: Account,
     passPrev: string,
@@ -57,6 +65,12 @@ export async function changeAccountPassword(
     if (json.redirect) {
         window.location.href = json.redirect;
     }
+}
+
+export async function fetchAccount(id: string): Promise<Account> {
+    const res = await fastFetch("/account?id=" + encodeURI(id));
+    const acc = await res.json();
+    return acc as Account;
 }
 
 export async function fetchAccounts(): Promise<Account[]> {

@@ -27,6 +27,11 @@ export async function formFetch(form: HTMLFormElement, body: object) {
     return res;
 }
 
-export function getCurrentAccount(): Account {
-    return JSON.parse(localStorage.getItem(CacheKeys.CURRENT_ACCOUNT)!);
+export function getCurrentAccount(): Account | null {
+    const str = localStorage.getItem(CacheKeys.CURRENT_ACCOUNT);
+    if (str) {
+        return JSON.parse(str) as Account;
+    }
+
+    return null;
 }

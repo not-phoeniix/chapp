@@ -92,6 +92,10 @@ h3 {
     margin-left: calc($gaps-inner / 2px);
 }
 
+.settings {
+    margin: $gaps-outer;
+}
+
 .clickable {
     background-color: var(--bg-secondary);
     padding: 5px;

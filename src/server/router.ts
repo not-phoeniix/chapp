@@ -15,8 +15,10 @@ const router = (app: express.Express) => {
     app.post("/signup", mid.requiresSecure, mid.requiresLogout, Account.signup);
     app.patch("/accountColor", mid.requiresSecure, mid.requiresLogin, Account.changeColor);
     app.patch("/accountPassword", mid.requiresSecure, mid.requiresLogin, Account.changePassword);
+    app.patch("/accountUpgrade", mid.requiresSecure, mid.requiresLogin, Account.upgrade);
     app.get("/logout", mid.requiresLogin, Account.logout);
     app.get("/accounts", mid.requiresSecure, mid.requiresLogin, Account.getAccounts);
+    app.get("/account", mid.requiresSecure, mid.requiresLogin, Account.getAccount);
 
     app.post("/message", mid.requiresSecure, mid.requiresLogin, Message.sendMessage);
     app.get("/message", mid.requiresSecure, mid.requiresLogin, Message.getMessage);

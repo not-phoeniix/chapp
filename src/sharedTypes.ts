@@ -17,6 +17,7 @@ export interface Account {
     username: string;
     id: string;
     color: string;
+    premium: boolean;
 };
 
 export interface SocketServerEvents {

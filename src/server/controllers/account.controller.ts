@@ -28,6 +28,7 @@ const login = async (req: Request, res: Response) => {
             username: doc.username,
             id: doc.id,
             color: doc.color,
+            premium: doc.premium,
         };
         return res.json({ redirect: "/", account });
 
@@ -65,7 +66,8 @@ const signup = async (req: Request, res: Response) => {
         const account: sharedTypes.Account = {
             username: newAccount.username,
             id: newAccount.id,
-            color: `hsl(${Math.floor(Math.random() * 360)}, 90%, 45%)`
+            color: `hsl(${Math.floor(Math.random() * 360)}, 90%, 45%)`,
+            premium: newAccount.premium,
         };
 
         return res.json({ redirect: "/", account });
@@ -102,6 +104,10 @@ const changeColor = async (req: Request, res: Response) => {
 
         if (!doc) {
             return res.status(404).json({ error: "Account doesn't exist!" });
+        }
+
+        if (!doc.premium) {
+            return res.status(400).json({ error: "Cannot change color on a non-premium account!" });
         }
 
         doc.color = color;
@@ -157,6 +163,40 @@ const changePassword = async (req: Request, res: Response) => {
     }
 };
 
+const upgrade = async (req: Request, res: Response) => {
+    // find by either name or id (prefer id)
+    const { username, id } = req.body;
+
+    if (!username && !id) {
+        return res.status(400).json({ error: "Missing required paramter!" });
+    }
+
+    try {
+        let doc: accountModel.AccountDoc | null;
+
+        if (id) {
+            doc = await Account.findById(id);
+        } else {
+            doc = await Account.findOne({
+                username: new RegExp(`^${username}$`, "i")
+            });
+        }
+
+        if (!doc) {
+            return res.status(404).json({ error: "Account doesn't exist!" });
+        }
+
+        doc.premium = true;
+        await doc.save();
+
+        return res.status(204).json();
+
+    } catch (err) {
+        console.log(err);
+        return res.status(500).json({ error: "Internal server error occured!" });
+    }
+};
+
 const getAccounts = async (req: Request, res: Response) => {
     try {
         const doc = await Account.find();
@@ -166,10 +206,49 @@ const getAccounts = async (req: Request, res: Response) => {
                 username: acc.username,
                 id: acc.id,
                 color: acc.color,
+                premium: acc.premium,
             };
 
             return data;
         }));
+
+    } catch (err) {
+        console.log(err);
+        return res.status(500).json({ error: "Internal error occured!" });
+    }
+};
+
+const getAccount = async (req: Request, res: Response) => {
+    // find by either name or id (prefer id)
+    const { username, id } = req.query;
+
+    if (!username && !id) {
+        return res.status(400).json({ error: "Missing required paramter!" });
+    }
+
+    try {
+        let doc: accountModel.AccountDoc | null;
+
+        if (id) {
+            doc = await Account.findById(id);
+        } else {
+            doc = await Account.findOne({
+                username: new RegExp(`^${username}$`, "i")
+            });
+        }
+
+        if (!doc) {
+            return res.status(404).json({ error: "Account doesn't exist!" });
+        }
+
+        const data: sharedTypes.Account = {
+            username: doc.username,
+            id: doc.id,
+            color: doc.color,
+            premium: doc.premium,
+        };
+
+        return res.json(data);
 
     } catch (err) {
         console.log(err);
@@ -182,6 +261,8 @@ export default {
     login,
     signup,
     getAccounts,
+    getAccount,
     changeColor,
     changePassword,
+    upgrade,
 };

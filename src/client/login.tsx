@@ -1,5 +1,5 @@
 import { JSX, SubmitEvent, useState } from "react";
-import { Container, createRoot, Root } from "react-dom/client";
+import { Container, createRoot } from "react-dom/client";
 import { formFetch } from "./utils";
 import { CacheKeys, Variable } from "./types";
 import * as theme from "./theme";
@@ -13,8 +13,6 @@ export interface Props {
     status: Variable<string>;
     openPage: Variable<Page>;
 };
-
-let root: Root;
 
 async function onLoginSubmit(
     e: SubmitEvent<HTMLFormElement>,
@@ -251,7 +249,7 @@ function RootWidget() {
 };
 
 function init() {
-    root = createRoot(document.getElementById("content") as Container);
+    const root = createRoot(document.getElementById("content") as Container);
     root.render(<RootWidget />);
 
     theme.restoreTheme();

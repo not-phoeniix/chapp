@@ -18,7 +18,7 @@ interface ChatProps {
 };
 
 const Titlebar = (props: ChatProps) => {
-    const acc = utils.getCurrentAccount();
+    const acc = utils.getCurrentAccount()!;
 
     return <nav className="titlebar flex horiz round-bg">
         <div className="flex horiz grow items-left">
@@ -117,7 +117,7 @@ const onChatSubmit = (
         socket.emit(
             "sendMessage",
             msg,
-            utils.getCurrentAccount().id,
+            utils.getCurrentAccount()!.id,
             props.openChannel.value.id
         );
 
@@ -222,6 +222,17 @@ const RootWidget = () => {
     const [refresh, setRefresh] = useState(false);
     const markRefresh = () => setRefresh(!refresh);
 
+    // re-fetch account only when we first render
+    useEffect(() => {
+        const acc = utils.getCurrentAccount()!;
+
+        api.fetchAccount(acc.id).then(fetched => {
+            // re-render when we fetch
+            localStorage.setItem(CacheKeys.CURRENT_ACCOUNT, JSON.stringify(fetched));
+            markRefresh();
+        });
+    }, []);
+
     // ~~~ try to get cached values ~~~
 
     const channelsCached = localStorage.getItem(CacheKeys.CHANNELS);
@@ -301,7 +312,7 @@ const RootWidget = () => {
 
 function init() {
     // if cache doesn't exist for logged in user somehow, redirect to logout
-    if (!localStorage.getItem(CacheKeys.CURRENT_ACCOUNT)) {
+    if (!utils.getCurrentAccount()) {
         window.location.href = "/logout";
         return;
     }
