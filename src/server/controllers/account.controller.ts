@@ -5,7 +5,7 @@ import * as accountModel from "../models/account.model";
 
 const logout = (req: Request, res: Response) => {
     req.session.destroy(() => console.log("Session destroyed!"));
-    return res.redirect("/");
+    return res.redirect("/login");
 };
 
 const login = async (req: Request, res: Response) => {
