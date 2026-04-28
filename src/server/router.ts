@@ -29,6 +29,10 @@ const router = (app: express.Express) => {
     app.get("/channels", mid.requiresSecure, mid.requiresLogin, Channel.getChannels);
     app.post("/channel", mid.requiresSecure, mid.requiresLogin, Channel.createChannel);
     app.delete("/channel", mid.requiresSecure, mid.requiresLogin, Channel.deleteChannel);
+
+    // 404 page, redirect to main app page if route is invalid 
+    //   (which will redirect to login if logged out)
+    app.use((req, res) => res.redirect("/"));
 };
 
 export default router;
